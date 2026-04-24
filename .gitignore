@@ -1,0 +1,71 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Entornos virtuales
+.venv/
+venv/
+env/
+ENV/
+ema-venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Archivos temporales / SO / editores
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp
+*.bak
+*.swp
+*~
+.vscode/
+.idea/
+
+# Datos pesados
+data/raw/
+data/interim/
+data/processed/
+
+# Modelos y artefactos pesados
+models/
+*.keras
+*.h5
+*.pt
+*.pth
+*.pkl
+*.joblib
+*.onnx
+
+# Outputs pesados o regenerables
+outputs/predictions/
+outputs/logs/
+
+# Permitir métricas y figuras
+!outputs/
+!outputs/metrics/
+!outputs/metrics/**
+!reports/
+!reports/figures/
+!reports/figures/**
+
+# Caches comunes de ML / notebooks
+.cache/
+.matplotlib/
+.tensorflow/
+.keras/
+.dvc/
+mlruns/
+
+# Archivos de sistema / comprimidos grandes
+*.zip
+*.7z
+*.rar

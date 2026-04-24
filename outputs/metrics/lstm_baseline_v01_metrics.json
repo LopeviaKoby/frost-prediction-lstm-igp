@@ -1,0 +1,28 @@
+{
+  "model_name": "lstm_baseline_v01",
+  "target_definition": "tempsup_min(t+12h) <= 0 C",
+  "training": {
+    "epochs_ran": 7,
+    "batch_size": 32,
+    "early_stopping": true
+  },
+  "splits": {
+    "train_target_end": "2023-12-31 23:00:00",
+    "validation_target_end": "2024-12-31 23:00:00",
+    "test_target_start": "2025-01-01 00:00:00"
+  },
+  "test_metrics": {
+    "accuracy": 0.9403292181069959,
+    "precision": 0.4787052810902896,
+    "recall": 0.8699690402476781,
+    "f1": 0.6175824175824176,
+    "roc_auc": 0.9760689937715206,
+    "confusion_matrix": {
+      "tn": 5203,
+      "fp": 306,
+      "fn": 42,
+      "tp": 281
+    },
+    "positive_rate": 0.0553840877914952
+  }
+}
