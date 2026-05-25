@@ -22,17 +22,21 @@ REPORTS_FIGURES_DIR = REPORTS_DIR / "figures"
 REPORTS_TABLES_DIR = REPORTS_DIR / "tables"
 REPORTS_PAPER_NOTES_DIR = REPORTS_DIR / "paper_notes"
 
-BASELINE_VERSION = "v01"
+BASELINE_VERSION = "v02"
 RANDOM_STATE = 42
 FROST_THRESHOLD_C = 0.0
 FORECAST_HORIZON_HOURS = 12
 SEQUENCE_LENGTH_HOURS = 24
+TARGET_VARIABLE = "temp2m"
+TARGET_AGGREGATION = "min"
+TARGET_COLUMN = f"{TARGET_VARIABLE}_{TARGET_AGGREGATION}"
+TARGET_REFERENCE_FEATURE = f"{TARGET_VARIABLE}_mean"
 
 TRAIN_TARGET_END = "2023-12-31 23:00:00"
 VALIDATION_TARGET_END = "2024-12-31 23:00:00"
 
 RAW_DATASETS = {
-    "tempsup": "tempsup_hourly_2018_2025.csv",
+    "temp2m": "temp2m_hourly_2018_2025.csv",
     "HR": "HR_hourly_2018_2025.csv",
     "radinf": "radinf_hourly_2018_2025.csv",
     "dir": "dir_hourly_2018_2025.csv",
@@ -42,7 +46,7 @@ RAW_DATASETS = {
 }
 
 GROUP_LIMITS = {
-    "tempsup": (-30.0, 40.0),
+    "temp2m": (-30.0, 40.0),
     "HR": (0.0, 100.0),
     "radinf": (150.0, 500.0),
     "dir": (0.0, 360.0),
@@ -55,4 +59,7 @@ EXCLUDED_FEATURE_COLUMNS = {
     "frost_event_current",
     f"frost_event_t_plus_{FORECAST_HORIZON_HOURS}h",
     "target_timestamp",
+    "dir_mean",
+    "dir_max",
+    "dir_min",
 }
