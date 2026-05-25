@@ -10,13 +10,14 @@ Dado un conjunto de observaciones meteorologicas horarias en una estacion EMA de
 
 - Tipo de problema: clasificacion binaria
 - Target baseline: `frost_event_t_plus_12h`
-- Regla de helada baseline: `tempsup_min(t+12h) <= 0 °C`
+- Regla de helada baseline v02: `temp2m_min(t+12h) <= 0 °C`
 
-Esta decision es deliberadamente simple:
+Esta decision es deliberadamente simple y, en la version actual, tambien responde a una correccion metodologica:
 
 - es coherente con una primera linea base operativa;
 - evita convertir prematuramente el proyecto en un problema mas complejo de pronostico multisalida;
 - permite priorizar sensibilidad/recall, que es relevante cuando un falso negativo puede ocultar un evento adverso.
+- se descarta `tempsup` como sensor objetivo porque la revision de distribuciones y periodos prolongados fuera de rango sugirio problemas de lectura incompatibles con un baseline confiable.
 
 ## 2. Contexto bibliografico accionable
 
@@ -102,7 +103,7 @@ Adopcion metodologica:
 
 Variables meteorologicas disponibles:
 
-- temperatura superficial (`tempsup_*`)
+- temperatura a 2 metros (`temp2m_*`)
 - humedad relativa (`HR_*`)
 - radiacion infrarroja (`radinf_*`)
 - direccion del viento (`dir_*`)
@@ -118,6 +119,9 @@ Variables temporales agregadas:
 - dia de la semana
 - indicadores binarios de noche y temporada seca
 - variables ciclicas seno/coseno
+- componentes vectoriales del viento (`dir_mean_sin`, `dir_mean_cos`)
+- rezagos causales de `temp2m_mean`
+- rolling statistics causales de `temp2m_mean`
 
 ## 4. Limpieza y supuestos de calidad
 
@@ -194,11 +198,30 @@ Criterio interpretativo:
 
 - para heladas, el recall merece atencion especial porque los falsos negativos pueden ser costosos.
 
+Resultado observado en el baseline `v02` reentrenado:
+
+- accuracy test: `0.9694`
+- precision test: `0.4338`
+- recall test: `0.9709`
+- F1 test: `0.5996`
+- ROC-AUC test: `0.9960`
+- matriz de confusion test:
+  - TN: `6906`
+  - FP: `218`
+  - FN: `5`
+  - TP: `167`
+
+Lectura metodologica:
+
+- el modelo mantiene una sensibilidad muy alta sobre la clase positiva;
+- la precision sigue siendo moderada, lo que indica espacio para calibracion de umbral y comparacion con baselines tabulares;
+- el comportamiento es consistente con un sistema de alerta conservador.
+
 ## 9. Limitaciones declaradas
 
 - No hay informacion directa de nubosidad, humedad del suelo ni forzantes de gran escala.
 - El dataset parece corresponder a una estacion puntual, no a una red espacial.
-- La calidad de algunos extremos sugiere ruido instrumental o de integracion.
+- La calidad de `tempsup` sugiere problemas instrumentales o de lectura, por lo que deja de usarse como sensor objetivo.
 - El baseline no hace calibracion de umbral ni optimizacion de hiperparametros.
 
 ## 10. Siguientes pasos despues del baseline

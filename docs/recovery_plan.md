@@ -14,12 +14,13 @@ Estado observado al inicio de esta sesion:
 ## 2. Hallazgos tecnicos clave
 
 - Dataset integrado actual: 67,200 registros horarios y 28 variables numericas.
-- Variable objetivo contemporanea disponible: `tempsup_min <= 0`.
+- La evidencia exploratoria y la discusion con asesoria metodologica respaldan abandonar `tempsup` como sensor objetivo.
+- La nueva referencia objetivo pasa a ser `temp2m_min <= 0`.
 - Desbalance de clases actual: aproximadamente 5.39% de eventos de helada.
 - Filas con faltantes: 561.
 - Existen valores fisicamente sospechosos en algunas columnas, por ejemplo:
   - `HR_min < 0`
-  - `tempsup_min` extremadamente bajo para el contexto
+  - `tempsup_min` extremadamente bajo para el contexto durante periodos prolongados
   - algunos maximos/minimos de presion fuera del rango operativo esperado
 
 Conclusiones:
@@ -61,12 +62,12 @@ Objetivo:
 
 Decision baseline:
 
-- Target de clasificacion: `tempsup_min(t+12h) <= 0 °C`
+- Target de clasificacion: `temp2m_min(t+12h) <= 0 °C`
 - Variable binaria: `frost_event_t_plus_12h`
 
 Salida esperada:
 
-- `data/processed/frost_dataset_v01.csv`
+- `data/processed/frost_dataset_v02.csv`
 
 ### Fase C. Generacion de secuencias supervisadas
 
@@ -110,13 +111,13 @@ Objetivo:
 
 Salidas esperadas:
 
-- `models/lstm/lstm_baseline_v01.keras`
-- `models/lstm/lstm_baseline_v01_scaler.joblib`
-- `outputs/metrics/lstm_baseline_v01_metrics.json`
-- `outputs/predictions/lstm_baseline_v01_predictions.csv`
-- `reports/figures/lstm_baseline_v01_training_curve.png`
-- `reports/figures/lstm_baseline_v01_confusion_matrix.png`
-- `reports/figures/lstm_baseline_v01_roc_curve.png`
+- `models/lstm/lstm_baseline_v02.keras`
+- `models/lstm/lstm_baseline_v02_scaler.joblib`
+- `outputs/metrics/lstm_baseline_v02_metrics.json`
+- `outputs/predictions/lstm_baseline_v02_predictions.csv`
+- `reports/figures/lstm_baseline_v02_training_curve.png`
+- `reports/figures/lstm_baseline_v02_confusion_matrix.png`
+- `reports/figures/lstm_baseline_v02_roc_curve.png`
 
 ## 5. Riesgos controlados
 
@@ -165,3 +166,22 @@ La etapa quedara completa cuando existan:
 - documento metodologico y de capacidad de laptop
 - entrenamiento baseline LSTM ejecutado y guardado
 - plan claro para la siguiente iteracion sin entrar aun a optimizacion
+
+## 8. Estado real alcanzado con `v02`
+
+Esta etapa ya cuenta con:
+
+- ingesta reproducible de `temp2m_hourly_2018_2025.csv` en `data/raw/`;
+- dataset limpio `v02` y dataset procesado `v02`;
+- baseline LSTM `v02` entrenado y guardado;
+- metricas y predicciones `v02`;
+- figuras de entrenamiento, confusion matrix, ROC y figuras de presentacion `v02`;
+- correccion metodologica formal para abandonar `tempsup` como sensor objetivo.
+
+Metricas test observadas en `v02`:
+
+- accuracy: `0.9694`
+- precision: `0.4338`
+- recall: `0.9709`
+- F1: `0.5996`
+- ROC-AUC: `0.9960`
