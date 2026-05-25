@@ -34,7 +34,7 @@ def build_and_save_datasets() -> dict[str, Path]:
     inventory_path.write_text(
         "\n".join(
             [
-                "# Inventario del Dataset v01",
+                f"# Inventario del Dataset {BASELINE_VERSION}",
                 "",
                 f"- Filas: {inventory['rows']}",
                 f"- Columnas: {inventory['columns']}",

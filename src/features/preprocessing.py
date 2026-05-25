@@ -10,6 +10,8 @@ from src.config import (
     FORECAST_HORIZON_HOURS,
     FROST_THRESHOLD_C,
     GROUP_LIMITS,
+    TARGET_COLUMN,
+    TARGET_REFERENCE_FEATURE,
     TRAIN_TARGET_END,
     VALIDATION_TARGET_END,
 )
@@ -69,15 +71,38 @@ def add_temporal_features(dataframe: pd.DataFrame) -> pd.DataFrame:
     return enriched_df
 
 
+def add_domain_features(dataframe: pd.DataFrame) -> pd.DataFrame:
+    enriched_df = dataframe.copy()
+
+    if "dir_mean" in enriched_df.columns:
+        direction_radians = np.deg2rad(enriched_df["dir_mean"])
+        enriched_df["dir_mean_sin"] = np.sin(direction_radians)
+        enriched_df["dir_mean_cos"] = np.cos(direction_radians)
+
+    if TARGET_REFERENCE_FEATURE in enriched_df.columns:
+        enriched_df[f"{TARGET_REFERENCE_FEATURE}_lag_1h"] = enriched_df[TARGET_REFERENCE_FEATURE].shift(1)
+        enriched_df[f"{TARGET_REFERENCE_FEATURE}_lag_6h"] = enriched_df[TARGET_REFERENCE_FEATURE].shift(6)
+        enriched_df[f"{TARGET_REFERENCE_FEATURE}_roll_mean_3h"] = (
+            enriched_df[TARGET_REFERENCE_FEATURE].rolling(window=3, min_periods=3).mean()
+        )
+        enriched_df[f"{TARGET_REFERENCE_FEATURE}_roll_std_6h"] = (
+            enriched_df[TARGET_REFERENCE_FEATURE].rolling(window=6, min_periods=6).std()
+        )
+
+    return enriched_df
+
+
 def build_processed_dataset(
     cleaned_hourly_df: pd.DataFrame,
     horizon_hours: int = FORECAST_HORIZON_HOURS,
     frost_threshold_c: float = FROST_THRESHOLD_C,
 ) -> pd.DataFrame:
     processed_df = add_temporal_features(cleaned_hourly_df)
-    processed_df["frost_event_current"] = (
-        processed_df["tempsup_min"] <= frost_threshold_c
-    ).astype(int)
+    processed_df = add_domain_features(processed_df)
+    if TARGET_COLUMN not in processed_df.columns:
+        raise KeyError(f"No se encontro la columna objetivo requerida: {TARGET_COLUMN}")
+
+    processed_df["frost_event_current"] = (processed_df[TARGET_COLUMN] <= frost_threshold_c).astype(int)
     processed_df[f"frost_event_t_plus_{horizon_hours}h"] = processed_df["frost_event_current"].shift(
         -horizon_hours
     )

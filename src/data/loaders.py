@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 import pandas as pd
 
-from src.config import DATA_RAW_DIR, RAW_DATASETS
+from src.config import DATA_EXTERNAL_DIR, DATA_RAW_DIR, RAW_DATASETS
 
 
 def _flatten_raw_columns(path: Path, dataframe: pd.DataFrame) -> pd.DataFrame:
@@ -34,15 +35,32 @@ def load_hourly_variable_csv(path: Path) -> pd.DataFrame:
     return _flatten_raw_columns(path=path, dataframe=raw_df)
 
 
+def resolve_dataset_path(variable_name: str, filename: str, data_dir: Path) -> Path:
+    env_var = f"FROST_{variable_name.upper()}_SOURCE_PATH"
+    candidates = [data_dir / filename, DATA_EXTERNAL_DIR / filename]
+
+    configured_path = os.getenv(env_var)
+    if configured_path:
+        candidates.append(Path(configured_path).expanduser())
+
+    for path in candidates:
+        if path.exists():
+            return path
+
+    searched = "\n".join(f"- {candidate}" for candidate in candidates)
+    raise FileNotFoundError(
+        "No se encontro el archivo requerido para "
+        f"`{variable_name}`.\nSe buscaron estas rutas:\n{searched}\n"
+        f"Tambien puedes definir la variable de entorno `{env_var}`."
+    )
+
+
 def load_raw_hourly_dataset(data_dir: Path | None = None) -> pd.DataFrame:
     data_dir = data_dir or DATA_RAW_DIR
     dataframes = []
 
     for variable_name, filename in RAW_DATASETS.items():
-        path = data_dir / filename
-        if not path.exists():
-            raise FileNotFoundError(f"No se encontro el archivo requerido: {path}")
-
+        path = resolve_dataset_path(variable_name=variable_name, filename=filename, data_dir=data_dir)
         dataframe = load_hourly_variable_csv(path)
         # El archivo de presion viene como patm en la cabecera original, pero
         # mantenemos el prefijo de archivo para que el repositorio sea consistente.
