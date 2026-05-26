@@ -20,50 +20,15 @@ ERA5_MANIFESTS_ROOT = ERA5_ROOT / "_manifests"
 ERA5_STATE_PATH = ERA5_ROOT / "_download_state.json"
 ERA5_LOG_PATH = OUTPUTS_LOGS_DIR / "era5_download.log"
 
-MANTARO_BASIN_BBOX = [-10, -77, -14, -74]
-SOUTH_AMERICA_BBOX = [15, -90, -60, -15]
-
-MANTARO_CORE_VARIABLES = [
-    "2m_temperature",
-    "10m_u_component_of_wind",
-    "10m_v_component_of_wind",
-    "surface_pressure",
-    "total_cloud_cover",
-    "skin_temperature",
-    "surface_sensible_heat_flux",
-    "surface_latent_heat_flux",
-    "total_precipitation",
-    "soil_temperature_level_1",
-    "volumetric_soil_water_layer_4",
-]
-
-MANTARO_EXTENDED_VARIABLES = MANTARO_CORE_VARIABLES + [
-    "mean_sea_level_pressure",
-    "evaporation",
-    "potential_evaporation",
-    "total_sky_direct_solar_radiation_at_surface",
-    "surface_net_solar_radiation_clear_sky",
-    "runoff",
-    "surface_runoff",
-    "soil_temperature_level_2",
-    "soil_temperature_level_3",
-    "soil_temperature_level_4",
-    "leaf_area_index_low_vegetation",
-    "leaf_area_index_high_vegetation",
-]
-
-SOUTH_AMERICA_MONTHLY_VARIABLES = [
-    "2m_temperature",
-    "10m_u_component_of_wind",
-    "10m_v_component_of_wind",
-    "mean_sea_level_pressure",
-    "sea_surface_temperature",
-    "surface_pressure",
-    "evaporation",
-    "potential_evaporation",
-    "total_sky_direct_solar_radiation_at_surface",
-    "surface_net_solar_radiation_clear_sky",
-]
+from src.settings import (
+    CDSAPI_URL,
+    CDSAPI_KEY,
+    ERA5_MANTARO_BBOX,
+    ERA5_SOUTH_AMERICA_BBOX,
+    MANTARO_CORE_VARIABLES,
+    MANTARO_EXTENDED_VARIABLES,
+    SOUTH_AMERICA_MONTHLY_VARIABLES,
+)
 
 
 @dataclass(frozen=True)
@@ -75,26 +40,8 @@ class RequestSpec:
     logical_id: str
 
 
-def load_env_file(env_path: Path) -> None:
-    if not env_path.exists():
-        return
-
-    for line in env_path.read_text(encoding="utf-8").splitlines():
-        line = line.strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-        key, value = line.split("=", 1)
-        os.environ.setdefault(key.strip(), value.strip())
-
-
 def build_client():
-    env_path = PROJECT_ROOT / ".env"
-    load_env_file(env_path)
-
-    url = os.getenv("CDSAPI_URL")
-    key = os.getenv("CDSAPI_KEY")
-
-    if not url or not key:
+    if not CDSAPI_URL or not CDSAPI_KEY:
         raise RuntimeError(
             "No se encontraron CDSAPI_URL y CDSAPI_KEY. Configura el archivo .env antes de descargar."
         )
@@ -106,7 +53,7 @@ def build_client():
             "No se encontro el paquete cdsapi. Instala la dependencia antes de descargar."
         ) from exc
 
-    return cdsapi.Client(url=url, key=key, quiet=False, progress=True)
+    return cdsapi.Client(url=CDSAPI_URL, key=CDSAPI_KEY, quiet=False, progress=True)
 
 
 def ensure_directories() -> None:
@@ -201,7 +148,7 @@ def build_hourly_basin_request(year: int, month: int, variables: list[str]) -> R
         "time": [f"{hour:02d}:00" for hour in range(24)],
         "data_format": "netcdf",
         "download_format": "unarchived",
-        "area": MANTARO_BASIN_BBOX,
+        "area": ERA5_MANTARO_BBOX,
     }
     return RequestSpec(
         dataset="reanalysis-era5-single-levels",
@@ -225,7 +172,7 @@ def build_monthly_sa_request(year: int) -> RequestSpec:
         "time": "00:00",
         "data_format": "netcdf",
         "download_format": "unarchived",
-        "area": SOUTH_AMERICA_BBOX,
+        "area": ERA5_SOUTH_AMERICA_BBOX,
         "grid": [0.5, 0.5],
     }
     return RequestSpec(

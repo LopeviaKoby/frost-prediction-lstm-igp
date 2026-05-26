@@ -106,7 +106,10 @@ El repositorio sigue un diseño modular bajo buenas prácticas de ingeniería de
 │   ├── data/            # Módulos de carga y descompresión/extracción de ERA5 y EMA.
 │   ├── features/        # Preprocesamiento, transformaciones y generación de secuencias.
 │   ├── models/          # Definición de arquitecturas de Deep Learning y entrenamiento.
-│   └── visualization/   # Generación de gráficos analíticos y de presentación.
+│   ├── visualization/   # Generación de gráficos analíticos y de presentación.
+│   ├── config.py        # Configuración de rutas estáticas y parámetros del modelo.
+│   └── settings.py      # Módulo para inyectar constantes y variables de entorno desde .env.
+├── .env                 # Variables de entorno (API keys, Bounding Boxes, validaciones).
 ├── .gitignore           # Archivo de exclusión de archivos temporales, entornos y datos pesados.
 ├── requirements.txt     # Dependencias de Python necesarias (xarray, netCDF4, tensorflow, pandas, etc.).
 └── README.md            # Guía del proyecto (este archivo).
@@ -133,5 +136,3 @@ Entrena la red LSTM utilizando la segmentación temporal estricta (entrenamiento
 ## 6. Documentación Clave
 
 *   [docs/methodology.md](docs/methodology.md): Metodología científica adoptada, justificación de variables y revisión bibliográfica.
-*   [docs/era5_download_strategy.md](docs/era5_download_strategy.md): Estrategia de descarga y variables requeridas de la API de Copernicus.
-*   [reports/paper_notes/literature_synthesis_v01.md](reports/paper_notes/literature_synthesis_v01.md): Síntesis de literatura científica en relación con las heladas en los Andes.

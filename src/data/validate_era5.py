@@ -13,7 +13,7 @@ import xarray as xr
 from src.config import DATA_RAW_DIR, REPORTS_TABLES_DIR
 
 
-ERA5_VALIDATION_VERSION = "v01"
+from src.settings import ERA5_VALIDATION_VERSION
 ERA5_ROOT = DATA_RAW_DIR / "era5"
 ERA5_HOURLY_ROOT = ERA5_ROOT / "mantaro_hourly"
 ERA5_MONTHLY_ROOT = ERA5_ROOT / "sudamerica_monthly"
