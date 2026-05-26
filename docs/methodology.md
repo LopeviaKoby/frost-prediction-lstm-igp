@@ -173,8 +173,8 @@ Arquitectura elegida:
 Razon:
 
 - lo suficientemente expresiva para una primera linea base secuencial;
-- lo bastante pequena para CPU;
-- evita sobreingenieria en una etapa de recuperacion.
+- lo bastante pequeña para CPU;
+- evita sobreingeniería en esta etapa de investigación.
 
 ## 8. Entrenamiento y evaluacion
 
