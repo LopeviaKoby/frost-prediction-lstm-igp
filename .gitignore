@@ -61,12 +61,8 @@ outputs/logs/
 !reports/figures/**
 
 # Documentacion irrelevante
-docs/*.pdf
-docs/guion_defensa_*.md
-docs/presentation_structure_*.md
-docs/repo_comparison_analysis.md
-docs/laptop_training_requirements.md
-docs/informe_tecnico_pipeline_*.md
+docs/*
+!docs/methodology.md
 
 # Reportes y tablas (datos)
 reports/tables/
