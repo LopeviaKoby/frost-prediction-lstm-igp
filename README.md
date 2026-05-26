@@ -69,6 +69,7 @@ Observaciones locales registradas a resolución horaria por el Instituto Geofís
 ### B. Reanálisis Atmosférico Global (ERA5)
 Datos de modelamiento y reanálisis satelital del Centro Europeo de Previsiones Meteorológicas a Plazo Medio (ECMWF):
 *   **Parámetros de Descarga y Extensión Geográfica**:
+    *   **Configuración**: Los parámetros de área (Bounding Box) y la configuración de reintentos están definidos en la plantilla `.env.example` (replicados luego al `.env` local). Esto permite una rápida validación y ajuste de los criterios geográficos de extracción por parte de los especialistas.
     *   **Área Geográfica (Bounding Box)**: Latitud de `-10.0` a `-14.0° S`, Longitud de `-77.0` a `-74.0° W` (Cubre en su totalidad la Cuenca del Río Mantaro).
     *   **Resolución Espacial**: Rejilla de 0.25° x 0.25° (cada píxel cubre un área aproximada de **28 km x 28 km** en el terreno).
     *   **Estructura de Archivos**: Los archivos NetCDF (`.nc`) mensuales se descargan en formato comprimido que contiene dos archivos NetCDF internos:
@@ -110,6 +111,7 @@ El repositorio sigue un diseño modular bajo buenas prácticas de ingeniería de
 │   ├── config.py        # Configuración de rutas estáticas y parámetros del modelo.
 │   └── settings.py      # Módulo para inyectar constantes y variables de entorno desde .env.
 ├── .env                 # Variables de entorno (API keys, Bounding Boxes, validaciones).
+├── .env.example         # Plantilla con parámetros de descarga y configuración para validación rápida.
 ├── .gitignore           # Archivo de exclusión de archivos temporales, entornos y datos pesados.
 ├── requirements.txt     # Dependencias de Python necesarias (xarray, netCDF4, tensorflow, pandas, etc.).
 └── README.md            # Guía del proyecto (este archivo).
